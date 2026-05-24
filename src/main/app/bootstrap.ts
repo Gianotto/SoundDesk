@@ -10,6 +10,9 @@ import { createMediaKeys, type MediaKeys } from '@main/media/media-keys';
 import { createTrayManager, type TrayManager } from '@main/tray/tray-manager';
 import { createNotifier } from '@main/integrations/notifier';
 import { createMiniPlayer, type MiniPlayer } from '@main/windows/mini-player';
+import { createMprisAdapter } from '@main/media/mpris-adapter';
+import { createSmtcAdapter } from '@main/media/smtc-adapter';
+import { createShortcutsManager } from '@main/media/shortcuts';
 import type { TrackState } from '@shared/types';
 
 export interface AppContext {
@@ -61,6 +64,16 @@ export async function start(): Promise<AppContext | undefined> {
   const mediaKeys = createMediaKeys(controls, logger);
   mediaKeys.register();
 
+  const mpris = createMprisAdapter({ controls, logger });
+  const smtc = createSmtcAdapter({ controls, logger });
+
+  const shortcuts = createShortcutsManager({
+    controls,
+    logger,
+    onMiniPlayerToggle: () => miniPlayer.toggle()
+  });
+  shortcuts.apply(config.getShortcuts());
+
   bridge.on('trackChange', (t) => {
     logger.info('track change', { title: t.title, artist: t.artist });
     currentTrack.value = t;
@@ -69,6 +82,8 @@ export async function start(): Promise<AppContext | undefined> {
     tray.setPlaying(t.isPlaying);
     notifier.notify(t);
     miniPlayer.pushState(t, t.positionMs);
+    mpris?.update(t, t.positionMs);
+    smtc?.update(t, t.positionMs);
   });
 
   bridge.on('playStateChange', (u) => {
@@ -114,6 +129,7 @@ export async function start(): Promise<AppContext | undefined> {
 
   app.on('will-quit', () => {
     mediaKeys.unregister();
+    shortcuts.clear();
   });
 
   app.on('window-all-closed', () => {

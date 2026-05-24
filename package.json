@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "electron-store": "11.0.2",
-    "electron-updater": "6.8.3"
+    "electron-updater": "6.8.3",
+    "mpris-service": "^2.1.2"
   }
 }
