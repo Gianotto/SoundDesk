@@ -1,0 +1,25 @@
+name: scraper-nightly
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  scraper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:scraper
+        env:
+          SC_TEST_USERNAME: ${{ secrets.SC_TEST_USERNAME }}
+          SC_TEST_PASSWORD: ${{ secrets.SC_TEST_PASSWORD }}
+          SC_TEST_TRACK_URL: ${{ secrets.SC_TEST_TRACK_URL }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-scraper
+          path: playwright-report-scraper/

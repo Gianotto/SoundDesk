@@ -12,9 +12,12 @@
     "build:linux": "npm run build && electron-builder --linux",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:scraper": "playwright test --config=tests/scraper/playwright.config.ts",
+    "test:e2e": "npm run build && playwright test --config=tests/e2e/playwright.config.ts"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@types/node": "latest",
     "electron": "42.2.0",
     "electron-builder": "26.8.1",
@@ -31,14 +34,23 @@
   "build": {
     "appId": "com.gianotto.sounddesk",
     "productName": "SoundDesk",
-    "directories": { "output": "release" },
-    "files": ["out/**/*", "resources/**/*", "package.json"],
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "out/**/*",
+      "resources/**/*",
+      "package.json"
+    ],
     "win": {
       "target": "nsis",
       "icon": "resources/icon.ico"
     },
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": [
+        "AppImage",
+        "deb"
+      ],
       "icon": "resources/icon.png",
       "category": "AudioVideo"
     },
