@@ -27,7 +27,7 @@
     "vitest": "4.1.7"
   },
   "dependencies": {
-    "electron-store": "11.0.2",
+    "electron-store": "^8.2.0",
     "electron-updater": "6.8.3",
     "mpris-service": "^2.1.2"
   },

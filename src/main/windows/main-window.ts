@@ -9,6 +9,13 @@ export interface MainWindowHandles {
   view: BrowserView;
 }
 
+function resolveIcon(): string {
+  const base = app.isPackaged ? process.resourcesPath : join(process.cwd(), 'resources');
+  // use .ico only in packaged builds; .png is reliable in dev on all platforms
+  const file = process.platform === 'win32' ? 'icon.ico' : 'icon.png';
+  return join(base, file);
+}
+
 export function createMainWindow(): MainWindowHandles {
   const window = new BrowserWindow({
     width: 1200,
@@ -18,6 +25,7 @@ export function createMainWindow(): MainWindowHandles {
     title: 'SoundDesk',
     autoHideMenuBar: true,
     backgroundColor: '#1a1a1a',
+    icon: resolveIcon(),
     show: false
   });
 
@@ -37,6 +45,11 @@ export function createMainWindow(): MainWindowHandles {
 
   view.webContents.loadURL(SC_URL);
 
+  // ready-to-show never fires on a BrowserWindow with no own URL; show on first paint of the view instead
+  const showOnce = () => { if (!window.isVisible()) window.show(); };
+  view.webContents.once('dom-ready', showOnce);
+  setTimeout(showOnce, 3000); // fallback if dom-ready is delayed or fails
+
   view.webContents.on('did-fail-load', (_e, _code, _desc, _url, isMainFrame) => {
     if (!isMainFrame) return;
     const offlinePath = app.isPackaged
@@ -55,7 +68,6 @@ export function createMainWindow(): MainWindowHandles {
     }
   });
 
-  window.once('ready-to-show', () => window.show());
   return { window, view };
 }
 

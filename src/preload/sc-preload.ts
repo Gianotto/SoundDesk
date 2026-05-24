@@ -1,7 +1,20 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { CHANNELS } from '@shared/channels';
-import { SELECTORS, resolve } from './selectors';
 import { scrapeTrack, scrapePlayState, scrapePosition, healthCheck } from './scraper';
+
+// Inject into main world before SC's scripts so we can track AudioContext gain nodes.
+// The script tag executes synchronously in page context at preload time.
+const gainPatch = document.createElement('script');
+gainPatch.textContent = `(function(){
+  var orig = AudioContext.prototype.createGain;
+  AudioContext.prototype.createGain = function() {
+    var node = orig.call(this);
+    (window.__sdGainNodes = window.__sdGainNodes || []).push(node);
+    return node;
+  };
+})();`;
+(document.head || document.documentElement).appendChild(gainPatch);
+gainPatch.remove();
 
 const SEEK_THRESHOLD_MS = 1500;
 const SEEK_POLL_INTERVAL_MS = 1000;
@@ -72,19 +85,9 @@ function startObserving(): void {
   setTimeout(emitHealth, 5000);
 }
 
-function click(selectorKey: keyof typeof SELECTORS): void {
-  const el = resolve(SELECTORS[selectorKey]) as HTMLElement | null;
-  el?.click();
-}
-
 contextBridge.exposeInMainWorld('scBridge', {
   healthCheck
 });
-
-ipcRenderer.on(CHANNELS.CONTROL_PLAY, () => click('playPauseButton'));
-ipcRenderer.on(CHANNELS.CONTROL_PAUSE, () => click('playPauseButton'));
-ipcRenderer.on(CHANNELS.CONTROL_NEXT, () => click('nextButton'));
-ipcRenderer.on(CHANNELS.CONTROL_PREV, () => click('prevButton'));
 
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
   startObserving();

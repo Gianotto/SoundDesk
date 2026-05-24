@@ -5,5 +5,6 @@ contextBridge.exposeInMainWorld('miniPlayerApi', {
   onState: (cb: (s: unknown) => void) => {
     ipcRenderer.on(CHANNELS.MINI_PLAYER_STATE, (_e, payload) => cb(payload));
   },
-  command: (cmd: 'play-pause' | 'next' | 'prev') => ipcRenderer.send(CHANNELS.MINI_PLAYER_COMMAND, cmd)
+  command: (cmd: 'play-pause' | 'next' | 'prev' | 'volume', value?: number) =>
+    ipcRenderer.send(CHANNELS.MINI_PLAYER_COMMAND, cmd, value)
 });

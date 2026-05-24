@@ -1,4 +1,4 @@
-import { Tray, Menu, nativeImage, app, BrowserWindow } from 'electron';
+import { Tray, Menu, nativeImage, app, BrowserWindow, type NativeImage } from 'electron';
 import { join } from 'node:path';
 import type { Controls } from '@main/media/controls';
 
@@ -12,6 +12,7 @@ export function createTrayManager(opts: {
   window: BrowserWindow;
   controls: Controls;
   onShowMiniPlayer: () => void;
+  onOpenScDevTools?: () => void;
   resourcesDir: string;
 }): TrayManager {
   let tray: Tray | null = null;
@@ -25,6 +26,7 @@ export function createTrayManager(opts: {
     { label: 'Next', click: () => opts.controls.next() },
     { label: 'Previous', click: () => opts.controls.prev() },
     { type: 'separator' },
+    ...(opts.onOpenScDevTools ? [{ label: 'Open SC DevTools', click: opts.onOpenScDevTools }] : []),
     {
       label: 'Quit SoundDesk',
       click: () => {
@@ -36,7 +38,8 @@ export function createTrayManager(opts: {
 
   return {
     init() {
-      const icon = nativeImage.createFromPath(join(opts.resourcesDir, 'tray-icon.png'));
+      const raw = nativeImage.createFromPath(join(opts.resourcesDir, 'tray-icon.png'));
+      const icon: NativeImage = raw.isEmpty() ? nativeImage.createEmpty() : raw.resize({ width: 16, height: 16 });
       tray = new Tray(icon);
       tray.setToolTip('SoundDesk');
       tray.setContextMenu(buildMenu());

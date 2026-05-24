@@ -41,15 +41,24 @@ export const SELECTORS: SelectorTable = {
   },
   playPauseButton: {
     primary: '.playControl',
-    fallbacks: ['.playControls__play']
+    fallbacks: [
+      '.playControls__play',
+      'button[aria-label="Play"], button[aria-label="Pause"]'
+    ]
   },
   nextButton: {
     primary: '.skipControl__next',
-    fallbacks: ['.playControls__next']
+    fallbacks: [
+      '.playControls__next',
+      'button[aria-label="Next"]'
+    ]
   },
   prevButton: {
     primary: '.skipControl__previous',
-    fallbacks: ['.playControls__prev']
+    fallbacks: [
+      '.playControls__prev',
+      'button[aria-label="Previous"]'
+    ]
   },
   progressBar: {
     primary: '.playbackTimeline__progressWrapper',

@@ -10,6 +10,7 @@ export const CHANNELS = {
   CONTROL_PAUSE: 'sd:control:pause',
   CONTROL_NEXT: 'sd:control:next',
   CONTROL_PREV: 'sd:control:prev',
+  CONTROL_VOLUME: 'sd:control:volume',
 
   // main → mini-player renderer
   MINI_PLAYER_STATE: 'sd:mini-player:state',

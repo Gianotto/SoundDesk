@@ -58,6 +58,7 @@ export async function start(): Promise<AppContext | undefined> {
     window: handles.window,
     controls,
     onShowMiniPlayer: () => miniPlayer.toggle(),
+    onOpenScDevTools: undefined,
     resourcesDir
   });
   tray.init();

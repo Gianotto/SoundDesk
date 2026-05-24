@@ -27,8 +27,10 @@ export function scrapeTrack(): Omit<TrackState, 'positionWallClockMs'> | null {
 export function scrapePlayState(): PlayState {
   const btn = resolve(SELECTORS.playPauseButton);
   if (!btn) return 'unknown';
-  const cls = btn.className ?? '';
-  if (/\bplaying\b/.test(cls)) return 'playing';
+  // aria-label is "Pause" (or "Pause <track>") when playing, "Play" when paused
+  const aria = btn.getAttribute('aria-label')?.toLowerCase() ?? '';
+  if (aria === 'pause' || aria.startsWith('pause ')) return 'playing';
+  if (/\bplaying\b/i.test(btn.className ?? '')) return 'playing';
   return 'paused';
 }
 

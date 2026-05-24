@@ -6,17 +6,30 @@
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
+  <div id="titlebar">
+    <svg id="app-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1" y="6" width="2" height="8" rx="1" fill="#f50"/>
+      <rect x="4" y="3" width="2" height="11" rx="1" fill="#f50"/>
+      <rect x="7" y="1" width="2" height="13" rx="1" fill="#f50"/>
+      <rect x="10" y="4" width="2" height="10" rx="1" fill="#f50"/>
+      <rect x="13" y="7" width="2" height="7" rx="1" fill="#f50"/>
+    </svg>
+    <span id="app-name">SoundDesk</span>
+    <button id="close" title="Close">&#x2715;</button>
+  </div>
   <div id="root">
     <img id="art" alt="" />
     <div id="meta">
-      <div id="title">No track</div>
-      <div id="artist"></div>
+      <div id="title"><span>No track playing</span></div>
+      <div id="artist"><span></span></div>
       <div id="progress"><div id="bar"></div></div>
     </div>
-    <div id="controls">
-      <button id="prev" title="Previous">&#9198;</button>
-      <button id="playpause" title="Play/Pause">&#9654;</button>
-      <button id="next" title="Next">&#9197;</button>
+    <div id="right-col">
+      <div id="controls">
+        <button id="prev" title="Previous">&#9198;</button>
+        <button id="playpause" title="Play/Pause">&#9654;</button>
+        <button id="next" title="Next">&#9197;</button>
+      </div>
     </div>
   </div>
   <script type="module" src="./main.ts"></script>
