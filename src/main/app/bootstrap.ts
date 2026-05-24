@@ -9,6 +9,7 @@ import { createControls, type Controls } from '@main/media/controls';
 import { createMediaKeys, type MediaKeys } from '@main/media/media-keys';
 import { createTrayManager, type TrayManager } from '@main/tray/tray-manager';
 import { createNotifier } from '@main/integrations/notifier';
+import { createMiniPlayer, type MiniPlayer } from '@main/windows/mini-player';
 import type { TrackState } from '@shared/types';
 
 export interface AppContext {
@@ -20,6 +21,7 @@ export interface AppContext {
   controls: Controls;
   mediaKeys: MediaKeys;
   tray: TrayManager;
+  miniPlayer: MiniPlayer;
   currentTrack: { value: TrackState | null };
 }
 
@@ -42,6 +44,7 @@ export async function start(): Promise<AppContext | undefined> {
   const controls = createControls(() => handles.view.webContents);
   const currentTrack: { value: TrackState | null } = { value: null };
   const notifier = createNotifier(logger, () => config.getNotificationsEnabled());
+  const miniPlayer = createMiniPlayer({ controls });
 
   const resourcesDir = app.isPackaged
     ? join(process.resourcesPath)
@@ -50,7 +53,7 @@ export async function start(): Promise<AppContext | undefined> {
   const tray = createTrayManager({
     window: handles.window,
     controls,
-    onShowMiniPlayer: () => { /* wired in Task 15 */ },
+    onShowMiniPlayer: () => miniPlayer.toggle(),
     resourcesDir
   });
   tray.init();
@@ -65,6 +68,7 @@ export async function start(): Promise<AppContext | undefined> {
     controls.setKnownPlaying(t.isPlaying);
     tray.setPlaying(t.isPlaying);
     notifier.notify(t);
+    miniPlayer.pushState(t, t.positionMs);
   });
 
   bridge.on('playStateChange', (u) => {
@@ -78,6 +82,7 @@ export async function start(): Promise<AppContext | undefined> {
         positionMs: u.positionMs,
         positionWallClockMs: u.positionWallClockMs
       };
+      miniPlayer.pushState(currentTrack.value, u.positionMs);
     }
   });
 
@@ -90,6 +95,7 @@ export async function start(): Promise<AppContext | undefined> {
         positionMs: u.positionMs,
         positionWallClockMs: u.positionWallClockMs
       };
+      miniPlayer.pushState(currentTrack.value, u.positionMs);
     }
   });
 
@@ -114,5 +120,5 @@ export async function start(): Promise<AppContext | undefined> {
     if (process.platform !== 'darwin') app.quit();
   });
 
-  return { handles, logger, config, bridge, clock, controls, mediaKeys, tray, currentTrack };
+  return { handles, logger, config, bridge, clock, controls, mediaKeys, tray, miniPlayer, currentTrack };
 }
