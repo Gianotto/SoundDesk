@@ -1,0 +1,12 @@
+node_modules/
+out/
+dist/
+.vite/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+release/
+playwright-report-scraper/
+playwright-report-e2e/
