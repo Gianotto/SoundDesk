@@ -2,8 +2,8 @@
 
 > A desktop client for SoundCloud — system tray, mini player, media keys, and more.
 
-[![Build](https://github.com/Gianotto/sounddesk/actions/workflows/ci.yml/badge.svg)](https://github.com/Gianotto/sounddesk/actions)
-[![Release](https://img.shields.io/github/v/release/Gianotto/sounddesk?include_prereleases)](https://github.com/Gianotto/sounddesk/releases)
+[![Build](https://github.com/Gianotto/SoundDesk/actions/workflows/ci.yml/badge.svg)](https://github.com/Gianotto/SoundDesk/actions)
+[![Release](https://img.shields.io/github/v/release/Gianotto/SoundDesk?include_prereleases)](https://github.com/Gianotto/SoundDesk/releases)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue)](#installation)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -28,7 +28,7 @@ SoundDesk wraps the full SoundCloud web experience in a native desktop shell, ad
 
 ## Installation
 
-Download the latest release from the [Releases page](https://github.com/Gianotto/sounddesk/releases).
+Download the latest release from the [Releases page](https://github.com/Gianotto/SoundDesk/releases).
 
 | Platform | File |
 |----------|------|
@@ -49,7 +49,7 @@ On first launch, sign in to SoundCloud as usual — your session is saved locall
 ### Setup
 
 ```bash
-git clone https://github.com/Gianotto/sounddesk.git
+git clone https://github.com/Gianotto/SoundDesk.git
 cd sounddesk
 npm install
 ```
