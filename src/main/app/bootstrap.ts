@@ -13,6 +13,7 @@ import { createMiniPlayer, type MiniPlayer } from '@main/windows/mini-player';
 import { createMprisAdapter } from '@main/media/mpris-adapter';
 import { createSmtcAdapter } from '@main/media/smtc-adapter';
 import { createShortcutsManager } from '@main/media/shortcuts';
+import { createUpdater } from '@main/update/updater';
 import type { TrackState } from '@shared/types';
 
 export interface AppContext {
@@ -122,6 +123,11 @@ export async function start(): Promise<AppContext | undefined> {
     if (handles.window.isMinimized()) handles.window.restore();
     handles.window.focus();
   });
+
+  if (app.isPackaged) {
+    const updater = createUpdater(logger);
+    setTimeout(() => updater.checkAndPrompt(), 5000);
+  }
 
   app.on('before-quit', () => {
     (app as unknown as { isQuiting: boolean }).isQuiting = true;

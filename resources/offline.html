@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Offline</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #1a1a1a;
+      color: #eee;
+      font: 14px -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .wrap {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+    h2 { margin-bottom: 8px; }
+    p { color: #aaa; margin-bottom: 16px; }
+    button {
+      background: #f50;
+      color: #fff;
+      border: 0;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover { background: #e04400; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div>
+      <h2>Can't reach SoundCloud</h2>
+      <p>Check your internet connection and try again.</p>
+      <button onclick="location.href='https://soundcloud.com'">Retry</button>
+    </div>
+  </div>
+</body>
+</html>

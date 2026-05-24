@@ -1,5 +1,6 @@
 import { BrowserWindow, BrowserView, app, type App } from 'electron';
 import { join } from 'node:path';
+import { existsSync } from 'node:fs';
 
 const SC_URL = 'https://soundcloud.com';
 
@@ -35,6 +36,16 @@ export function createMainWindow(): MainWindowHandles {
   window.on('resize', () => applyViewBounds(window, view));
 
   view.webContents.loadURL(SC_URL);
+
+  view.webContents.on('did-fail-load', (_e, _code, _desc, _url, isMainFrame) => {
+    if (!isMainFrame) return;
+    const offlinePath = app.isPackaged
+      ? join(process.resourcesPath, 'offline.html')
+      : join(process.cwd(), 'resources', 'offline.html');
+    if (existsSync(offlinePath)) {
+      view.webContents.loadFile(offlinePath);
+    }
+  });
 
   window.on('close', (e) => {
     const quitting = (app as unknown as App & { isQuiting?: boolean }).isQuiting;

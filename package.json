@@ -27,5 +27,25 @@
     "electron-store": "11.0.2",
     "electron-updater": "6.8.3",
     "mpris-service": "^2.1.2"
+  },
+  "build": {
+    "appId": "com.gianotto.sounddesk",
+    "productName": "SoundDesk",
+    "directories": { "output": "release" },
+    "files": ["out/**/*", "resources/**/*", "package.json"],
+    "win": {
+      "target": "nsis",
+      "icon": "resources/icon.ico"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "resources/icon.png",
+      "category": "AudioVideo"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "gianotto",
+      "repo": "sounddesk"
+    }
   }
 }
