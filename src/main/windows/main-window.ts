@@ -1,4 +1,4 @@
-import { BrowserWindow, BrowserView, app } from 'electron';
+import { BrowserWindow, BrowserView, app, type App } from 'electron';
 import { join } from 'node:path';
 
 const SC_URL = 'https://soundcloud.com';
@@ -35,6 +35,14 @@ export function createMainWindow(): MainWindowHandles {
   window.on('resize', () => applyViewBounds(window, view));
 
   view.webContents.loadURL(SC_URL);
+
+  window.on('close', (e) => {
+    const quitting = (app as unknown as App & { isQuiting?: boolean }).isQuiting;
+    if (!quitting) {
+      e.preventDefault();
+      window.hide();
+    }
+  });
 
   window.once('ready-to-show', () => window.show());
   return { window, view };

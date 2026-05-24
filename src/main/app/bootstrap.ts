@@ -6,6 +6,9 @@ import { createConfigStore, type ConfigStore } from '@main/config/store';
 import { createScraperBridge, type ScraperBridge } from '@main/media/scraper-bridge';
 import { createLocalClock, type LocalClock } from '@main/media/local-clock';
 import { createControls, type Controls } from '@main/media/controls';
+import { createMediaKeys, type MediaKeys } from '@main/media/media-keys';
+import { createTrayManager, type TrayManager } from '@main/tray/tray-manager';
+import { createNotifier } from '@main/integrations/notifier';
 import type { TrackState } from '@shared/types';
 
 export interface AppContext {
@@ -15,6 +18,8 @@ export interface AppContext {
   bridge: ScraperBridge;
   clock: LocalClock;
   controls: Controls;
+  mediaKeys: MediaKeys;
+  tray: TrayManager;
   currentTrack: { value: TrackState | null };
 }
 
@@ -36,17 +41,36 @@ export async function start(): Promise<AppContext | undefined> {
   const clock = createLocalClock();
   const controls = createControls(() => handles.view.webContents);
   const currentTrack: { value: TrackState | null } = { value: null };
+  const notifier = createNotifier(logger, () => config.getNotificationsEnabled());
+
+  const resourcesDir = app.isPackaged
+    ? join(process.resourcesPath)
+    : join(process.cwd(), 'resources');
+
+  const tray = createTrayManager({
+    window: handles.window,
+    controls,
+    onShowMiniPlayer: () => { /* wired in Task 15 */ },
+    resourcesDir
+  });
+  tray.init();
+
+  const mediaKeys = createMediaKeys(controls, logger);
+  mediaKeys.register();
 
   bridge.on('trackChange', (t) => {
     logger.info('track change', { title: t.title, artist: t.artist });
     currentTrack.value = t;
     clock.sync({ positionMs: t.positionMs, wallClockMs: t.positionWallClockMs, isPlaying: t.isPlaying });
     controls.setKnownPlaying(t.isPlaying);
+    tray.setPlaying(t.isPlaying);
+    notifier.notify(t);
   });
 
   bridge.on('playStateChange', (u) => {
     clock.sync({ positionMs: u.positionMs, wallClockMs: u.positionWallClockMs, isPlaying: u.isPlaying });
     controls.setKnownPlaying(u.isPlaying);
+    tray.setPlaying(u.isPlaying);
     if (currentTrack.value) {
       currentTrack.value = {
         ...currentTrack.value,
@@ -78,9 +102,17 @@ export async function start(): Promise<AppContext | undefined> {
     handles.window.focus();
   });
 
+  app.on('before-quit', () => {
+    (app as unknown as { isQuiting: boolean }).isQuiting = true;
+  });
+
+  app.on('will-quit', () => {
+    mediaKeys.unregister();
+  });
+
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
   });
 
-  return { handles, logger, config, bridge, clock, controls, currentTrack };
+  return { handles, logger, config, bridge, clock, controls, mediaKeys, tray, currentTrack };
 }
