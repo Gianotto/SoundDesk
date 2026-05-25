@@ -8,7 +8,8 @@
       "Bash(npx tsc *)",
       "Bash(npm test *)",
       "Bash(node -e ' *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "PowerShell(git -C C:\\\\Dev\\\\sounddesk log --oneline -10)"
     ]
   }
 }
