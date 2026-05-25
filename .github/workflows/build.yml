@@ -21,6 +21,10 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: E2E smoke (Electron driver)
         run: npm run test:e2e
+        if: matrix.os == 'windows-latest'
+      - name: E2E smoke (Electron driver, Linux)
+        run: xvfb-run --auto-servernum npm run test:e2e
+        if: matrix.os == 'ubuntu-latest'
       - name: Build (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: npm run build:linux
