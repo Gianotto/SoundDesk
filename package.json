@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Sound Desk for SoundCloud — desktop app for Windows and Linux",
   "main": "out/main/index.js",
-  "author": "gianotto",
+  "author": "gianotto <gianotto@gmail.com>",
   "license": "MIT",
   "scripts": {
     "dev": "electron-vite dev",

@@ -17,8 +17,6 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run test
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
       - name: E2E smoke (Electron driver)
         run: npm run test:e2e
         if: matrix.os == 'windows-latest'
