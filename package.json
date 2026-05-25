@@ -39,8 +39,10 @@
     },
     "files": [
       "out/**/*",
-      "resources/**/*",
       "package.json"
+    ],
+    "extraResources": [
+      { "from": "resources", "to": "." }
     ],
     "win": {
       "target": "nsis",
